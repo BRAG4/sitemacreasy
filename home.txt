@@ -1,0 +1,11 @@
+    <!--
+        <p><strong>O Macreasy foi criado para tornar essa informação mais simples, acessível e prática.</strong></p>
+        <p>Registre o que você come, acompanhe seus nutrientes e aprenda mais sobre alimentação.</p>
+        <p><strong>Sua alimentação. Seus dados. Seu conhecimento.</strong></p>    -->
+    <!-- 
+        <h2>Você sabe o que está comendo?</h2>
+        <p>Nem sempre é fácil entender a quantidade de nutrientes presente em uma refeição.</p>
+        <p><strong>O Macreasy foi criado para tornar essa informação mais simples, acessível e prática.</strong></p>
+        <p>Registre o que você come, acompanhe seus nutrientes e aprenda mais sobre alimentação.</p>
+        <p><strong>Sua alimentação. Seus dados. Seu conhecimento.</strong></p>
+    -->

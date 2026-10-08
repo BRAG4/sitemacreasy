@@ -1,0 +1,77 @@
+.head-contato h1 {
+    font-size: 2.8rem;
+    margin-bottom: 12px;
+}
+
+.head-contato p {
+    color: #a0a0a0;
+    font-size: 1.1rem;
+    margin-bottom: 50px;
+}
+
+.cards-contato {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+.card-info {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.card-info:hover {
+    transform: translateY(-4px);
+    border-color: #2ecc71;
+}
+
+.card-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.card-info p {
+    font-size: 0.9rem;
+    color: #b0b0b0;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.link-contato {
+    color: #2ecc71;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.link-contato:hover {
+    text-decoration: underline;
+}
+
+.redes-links {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.redes-links a {
+    color: #ffffff;
+    text-decoration: none;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    transition: background-color 0.2s ease;
+}
+
+.redes-links a:hover {
+    background-color: #2ecc71;
+    color: #000;
+}

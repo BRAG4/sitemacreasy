@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Redefinir Senha</title>
+    <!-- Importando o SDK do Supabase via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div style="max-width: 400px; margin: 50px auto; font-family: Arial, sans-serif;">
+        <h2>Nova Senha</h2>
+        <p>Digite sua nova senha abaixo:</p>
+        
+        <input type="password" id="new-password" placeholder="Nova senha" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+        <button onclick="updatePassword()" style="width: 100%; padding: 10px; background: #0070f3; color: white; border: none; cursor: pointer;">Salvar Nova Senha</button>
+        
+        <p id="status" style="margin-top: 15px; font-weight: bold;"></p>
+    </div>
+
+    <script>
+        // Inicialize o Supabase com suas credenciais do projeto
+       const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+        const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function updatePassword() {
+            const newPassword = document.getElementById('new-password').value;
+            const statusEl = document.getElementById('status');
+
+            if (!newPassword || newPassword.length < 6) {
+                statusEl.style.color = 'red';
+                statusEl.innerText = 'A senha precisa ter pelo menos 6 caracteres.';
+                return;
+            }
+
+            // O Supabase já sabe quem é o usuário por causa do token na URL
+            const { data, error } = await supabase.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) {
+                statusEl.style.color = 'red';
+                statusEl.innerText = 'Erro ao atualizar: ' + error.message;
+            } else {
+                statusEl.style.color = 'green';
+                statusEl.innerText = 'Senha alterada com sucesso! Você já pode fechar esta página.';
+            }
+        }
+    </script>
+</body>
+</html>
