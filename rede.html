@@ -2,31 +2,104 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Redefinir Senha</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha - Macreasy</title>
     <!-- Importando o SDK do Supabase via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        h2 { margin-top: 0; color: #333; text-align: center; }
+        p { color: #666; font-size: 14px; text-align: center; }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background: #1d4ed8; }
+        button:disabled { background: #93c5fd; cursor: not-allowed; }
+        #status { margin-top: 15px; font-size: 14px; text-align: center; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <div style="max-width: 400px; margin: 50px auto; font-family: Arial, sans-serif;">
+
+    <div class="card">
         <h2>Nova Senha</h2>
-        <p>Digite sua nova senha abaixo:</p>
+        <p>Insira sua nova senha abaixo para concluir a alteração.</p>
         
-        <input type="password" id="new-password" placeholder="Nova senha" style="width: 100%; padding: 10px; margin-bottom: 10px;">
-        <button onclick="updatePassword()" style="width: 100%; padding: 10px; background: #0070f3; color: white; border: none; cursor: pointer;">Salvar Nova Senha</button>
+        <input type="password" id="new-password" placeholder="Digite a nova senha (mín. 6 caracteres)">
+        <button id="submit-btn" onclick="updatePassword()">Salvar Nova Senha</button>
         
-        <p id="status" style="margin-top: 15px; font-weight: bold;"></p>
+        <p id="status"></p>
     </div>
 
     <script>
-        // Inicialize o Supabase com suas credenciais do projeto
+        // Suas credenciais do Supabase
         const SUPABASE_URL = 'https://naxchqkulvlwygwswdpe.supabase.co'; 
-        const SUPABASE_PUBLISHABLE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5heGNocWt1bHZsd3lnd3N3ZHBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwNzUzNDcsImV4cCI6MjEwMjY1MTM0N30.BnR7931CxYIHLS5lRji76qWRLeq2d8ZNLF_x_dMxIrE'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5heGNocWt1bHZsd3lnd3N3ZHBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcwNzUzNDcsImV4cCI6MjEwMjY1MTM0N30.BnR7931CxYIHLS5lRji76qWRLeq2d8ZNLF_x_dMxIrE'; 
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // O Supabase v2 captura automaticamente os tokens do hash da URL ao carregar a página
+        window.addEventListener('DOMContentLoaded', async () => {
+            const statusEl = document.getElementById('status');
+            const btn = document.getElementById('submit-btn');
+            
+            // Desabilita o botão inicialmente até verificar se há uma sessão de recuperação válida
+            btn.disabled = true;
+            statusEl.style.color = '#555';
+            statusEl.innerText = 'Verificando link de recuperação...';
+
+            // Aguarda um instante para garantir que o SDK leu o hash da URL (#access_token=...)
+            setTimeout(async () => {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error || !session) {
+                    statusEl.style.color = 'red';
+                    statusEl.innerText = 'Link inválido ou expirado. Solicite uma nova recuperação de senha no aplicativo.';
+                } else {
+                    statusEl.style.color = 'green';
+                    statusEl.innerText = 'Link validado! Digite sua nova senha.';
+                    btn.disabled = false;
+                }
+            }, 1000);
+        });
 
         async function updatePassword() {
             const newPassword = document.getElementById('new-password').value;
             const statusEl = document.getElementById('status');
+            const btn = document.getElementById('submit-btn');
 
             if (!newPassword || newPassword.length < 6) {
                 statusEl.style.color = 'red';
@@ -34,17 +107,22 @@
                 return;
             }
 
-            // O Supabase já sabe quem é o usuário por causa do token na URL
-            const { data, error } = await supabase.auth.updateUser({
+            btn.disabled = true;
+            statusEl.style.color = '#555';
+            statusEl.innerText = 'Atualizando senha...';
+
+            const { error } = await supabase.auth.updateUser({
                 password: newPassword
             });
 
             if (error) {
                 statusEl.style.color = 'red';
                 statusEl.innerText = 'Erro ao atualizar: ' + error.message;
+                btn.disabled = false;
             } else {
                 statusEl.style.color = 'green';
-                statusEl.innerText = 'Senha alterada com sucesso! Você já pode fechar esta página.';
+                statusEl.innerText = 'Senha alterada com sucesso! Você já pode fechar esta página e voltar ao aplicativo.';
+                document.getElementById('new-password').value = '';
             }
         }
     </script>
